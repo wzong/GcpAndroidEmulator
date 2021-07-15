@@ -63,7 +63,7 @@
 ## Android Automation
 
 I've used [Appium](https://appium.io/) to automate Android Chrome. The framework
-supports all of Android/iOS Web/Native/Hybrid Apps.
+supports all of Android/iOS Web/Native/Hybrid Apps. Other alternatives found:
 
 * [Selendroid](http://selendroid.io/): After a few attempt with the latest
   `0.17.0` version, I found it does not support API > 23 (Android 6). And
