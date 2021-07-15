@@ -44,13 +44,13 @@
     If using SSH to access the VM, emulator can be started headlessly:
 
     ```shell
-    emulator -avd avd27 -no-audio -no-window &
+    emulator -avd avd27 -no-audio -no-window -writable-system &
     ```
 
     If using VncViewer to access the VM via GUI, we can start emulator with GUI:
 
     ```shell
-    emulator -avd avd27
+    emulator -avd avd27 -writable-system
     ```
 
     I have run into error of `/dev/kvm device: permission denied` even though
@@ -58,6 +58,31 @@
 
     ```shell
     sudo chown $USER -R /dev/kvm
+    ```
+
+5. Set up Network Proxy ([guide](https://appiumpro.com/editions/63-capturing-android-emulator-network-traffic-with-appium))
+
+    ```shell
+    adb root
+    adb remount
+    ca=~/.mitmproxy/mitmproxy-ca-cert.pem
+    hash=$(openssl x509 -noout -subject_hash_old -in $ca)
+    adb push $ca /system/etc/security/cacerts/$hash.0
+    adb unroot
+    ```
+
+6. Restart Android Emulator with Network Proxy
+
+    ```shell
+    emulator -avd avd27 -http-proxy http://0.0.0.0:8080
+    ```
+
+    The Appium automation below will start the proxy server at 8080 port
+    in the Java application/test. For manual troubleshooting, we can also
+    start the proxy server in terminal:
+
+    ```shell
+    mitmproxy
     ```
 
 ## Android Automation

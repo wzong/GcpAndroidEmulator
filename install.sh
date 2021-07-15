@@ -34,3 +34,7 @@ echo no | avdmanager create avd -n avd27 -k "system-images;android-27;google_api
 
 # Add user to kvm group
 sudo gpasswd -a $USER kvm
+
+# Install Mitmproxy
+sudo apt install python3-pip
+sudo pip3 install mitmproxy

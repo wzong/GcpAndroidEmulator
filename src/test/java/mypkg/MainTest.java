@@ -9,14 +9,17 @@ import org.junit.Test;
 
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import io.appium.mitmproxy.InterceptedMessage;
+import io.appium.mitmproxy.MitmproxyJava;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -26,6 +29,9 @@ import com.google.common.io.Files;
 public class MainTest {
   private static AppiumDriverLocalService service;
   private static AndroidDriver<WebElement> driver;
+
+  private MitmproxyJava proxy;
+  private List<InterceptedMessage> messages;
 
   @BeforeClass
   public static void setupGlobal() throws Exception {
@@ -61,10 +67,28 @@ public class MainTest {
 
   @Before
   public void setup() throws Exception {
+    messages = new ArrayList<>();
+    proxy = new MitmproxyJava("/usr/local/bin/mitmdump", (InterceptedMessage m) -> {
+      messages.add(m);
+      return m;
+    });
+    proxy.start();
   }
 
   @After
   public void teardown() throws Exception {
+    proxy.stop();
+    for (InterceptedMessage m : messages) {
+      System.out.println("Intercepted Network Requests: ");
+      System.out.println("Intercepted request for " + m.requestURL);
+      System.out.println("Response headers:");
+      for (String[] header : m.responseHeaders) {
+        for (String elem : header) {
+          System.out.print(elem + " ");
+        }
+        System.out.println("\n");
+      }
+    }
   }
 
   public WebElement getMirrorTestingAd() throws Exception {
@@ -82,7 +106,7 @@ public class MainTest {
     // TODO(wzong): wait for element to appear.
     List<WebElement> sparkleAdUrls = driver.findElementsByCssSelector(".promoted-sparkles-text-search-display-url");
     for (WebElement elem : sparkleAdUrls) {
-      if (elem.getText() == "mirrortesting.github.io/") {
+      if (elem.getText().contains("mirrortesting")) {
         return elem;
       }
     }
