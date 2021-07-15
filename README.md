@@ -1,4 +1,4 @@
-# GcpSelendroid
+# GcpAndroidEmulator
 
 ## Environment Setup
 
