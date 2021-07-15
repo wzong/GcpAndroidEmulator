@@ -102,7 +102,7 @@ Installations below:
       `chromedriver_69_to_70` that works for Android Chrome `69.0.3497.100`.
       A complete list is [here](https://chromedriver.chromium.org/downloads).
 
-# Android Chrome Automation
+## Example code
 
 Sample code developed at `src/test/java/mypkg/MainTest.java`. Video was
 captured at `appium_recording.mp4`. Execute `mvn test` to rerun.
